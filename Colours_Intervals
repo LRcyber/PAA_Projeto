@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Definition of the structure to represent an interval
+typedef struct {
+    int start;
+    int end;
+    char color[10]; // Storage for the interval color
+} Interval;
+
+// Function to sort intervals in non-decreasing order of start time
+int compare(const void *a, const void *b) {
+    Interval *intervalA = (Interval *)a;
+    Interval *intervalB = (Interval *)b;
+    return intervalA->start - intervalB->start;
+}
+
+// Function to color the intervals
+void colorIntervals(Interval intervals[], int n) {
+    const char *colors[] = {"Vermelho", "Amarelo", "Azul", "Verde"};
+    char last_color[10] = ""; // Store the last used color
+
+    for (int i = 0; i < n; i++) {
+        if (strcmp(last_color, intervals[i].color) != 0) {
+            // If the current interval has a different color from the last one, update the last used color
+            strcpy(last_color, intervals[i].color);
+        } else {
+            // If the current interval has the same color as the last one, continue with the same color
+            continue;
+        }
+
+        // Assign a new color
+        strcpy(intervals[i].color, last_color);
+
+        // Update the color for subsequent intervals with the same color until the end of the current interval
+        for (int j = i + 1; j < n && intervals[j].start < intervals[i].end; j++) {
+            strcpy(intervals[j].color, last_color);
+        }
+    }
+}
+
+int main() {
+    // Definition of the intervals
+    Interval intervals[] = {
+        {0, 6, "Vermelho"},
+        {1, 4, "Amarelo"},
+        {3, 5, "Azul"},
+        {3, 8, "Verde"},
+        {4, 7, "Amarelo"},
+        {5, 9, "Azul"},
+        {6, 10, "Vermelho"},
+        {7, 11, "Amarelo"}
+    };
+
+    int n = sizeof(intervals) / sizeof(intervals[0]);
+
+    // Sort the intervals
+    qsort(intervals, n, sizeof(Interval), compare);
+
+    // Call the function to color the intervals
+    colorIntervals(intervals, n);
+
+    // Print the intervals with their respective colors
+    printf("Colored Intervals:\n");
+    for (int i = 0; i < n; i++) {
+        printf("(%d, %d) - Cor: %s\n", intervals[i].start, intervals[i].end, intervals[i].color);
+    }
+
+    return 0;
+}
